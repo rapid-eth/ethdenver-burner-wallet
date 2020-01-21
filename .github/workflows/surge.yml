@@ -6,6 +6,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Build and Deploy to Surge
+    env:
+      REACT_APP_INFURA_KEY: ${{ secrets.REACT_APP_INFURA_KEY }}
     steps:
       - uses: actions/checkout@v1
       - name: Install Surge and deploy
@@ -13,8 +15,11 @@ jobs:
         with:
           node-version: 10.x
       - run: yarn install
-      - run: cd basic-wallet/
       - run: yarn build
-      - run: cd build/; mv index.html 200.html
-      - run: yarn global add surge
-      - run: surge ./ ${{ secrets.SURGE_DOMAIN }} --token ${{ secrets.SURGE_TOKEN }}
+      - run: |
+          cd basic-wallet/
+          yarn build
+          cd build/
+          mv index.html 200.html
+          npm install -g surge
+          surge ./ ${{ secrets.SURGE_DOMAIN }} --token ${{ secrets.SURGE_TOKEN }}
