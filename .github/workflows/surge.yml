@@ -1,0 +1,20 @@
+name: Build & Deploy
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build and Deploy to Surge
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Surge and deploy
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - run: yarn install
+      - run: cd basic-wallet/
+      - run: yarn build
+      - run: cd build/; mv index.html 200.html
+      - run: yarn global add surge
+      - run: surge ./ ${{ secrets.SURGE_DOMAIN }} --token ${{ secrets.SURGE_TOKEN }}
